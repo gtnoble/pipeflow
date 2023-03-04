@@ -11,14 +11,14 @@ import tables
 
 import PipeFlowpkg/stream
 
-let scalarTestValues: array[8, ScalarSample] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
-let vectorWrappedScalarTestValues: array[8, VectorSample] = [@[1.0], @[2.0], @[3.0], @[4.0], @[5.0], @[6.0], @[7.0], @[8.0]]
+let scalarTestValues: array[8, ScalarSample[float]] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
+let vectorWrappedScalarTestValues: array[8, VectorSample[float]] = [@[1.0], @[2.0], @[3.0], @[4.0], @[5.0], @[6.0], @[7.0], @[8.0]]
 
 suite "Compare Stream Input / Output":
 
   setup:
     var headers: Headers 
-    let scalarSignal: SignalStreamScalar = initSignalStream(scalarTestValues, headers)
+    let scalarSignal: SignalStreamScalar[float] = initSignalStream(scalarTestValues, headers)
 
   test "Scalar input and output are the same":
     check(scalarSignal.eachSample() == scalarTestValues)
@@ -27,7 +27,7 @@ suite "Test Stream File I/O":
 
   setup:
     let file: File = open("./tests/test_data/scalar_test_data.signal")
-    let vectorSignal: SignalStreamVector = initSignalStream(file)
+    let vectorSignal: SignalStreamVector[float] = initSignalStream(file)
     let testOutputFilePath: string = "./tests/test_data/stream_write_test.signal"
   
   teardown:
@@ -37,7 +37,7 @@ suite "Test Stream File I/O":
     check vectorSignal.eachSample() == vectorWrappedScalarTestValues
 
   test "Test Scalar file stream reading":
-    let scalarSignal: SignalStreamScalar = initSignalStream(vectorSignal, 0)
+    let scalarSignal: SignalStreamScalar[float] = initSignalStream(vectorSignal, 0)
     check(scalarSignal.eachSample() == scalarTestValues)
   
   test "Test header reading":
